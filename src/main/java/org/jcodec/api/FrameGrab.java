@@ -117,6 +117,20 @@ public class FrameGrab {
         return this;
     }
 
+
+    /**
+
+     Возвращает номер ключевого фрейма, юлижайшего к фрейму, которых относится к second
+
+     *
+
+     */
+    public int getKeyFrameForSeconds(double second) throws IOException, JCodecException {
+        sdt().seek(second);
+        int keyFrame = detectKeyFrame((int) sdt().getCurFrame());
+        return keyFrame;
+    }
+
     /**
      * Position frame grabber to a specific frame in a movie. As a result the
      * next decoded frame will be precisely the requested frame number.
