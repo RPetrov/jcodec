@@ -3,6 +3,7 @@ package org.jcodec.api;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.logging.Logger;
 
 import org.jcodec.api.specific.AVCMP4Adaptor;
 import org.jcodec.api.specific.ContainerAdaptor;
@@ -130,6 +131,24 @@ public class FrameGrab {
         int keyFrame = detectKeyFrame((int) sdt().getCurFrame());
         return keyFrame;
     }
+
+    /**
+
+     Возвращает номер ключевого фрейма, юлижайшего к фрейму, которых относится к second
+      @return seconds
+     *
+
+     */
+    public double getSecondsKeyFrameForSeconds(double second) throws IOException, JCodecException {
+        sdt().seek(second);
+        goToPrevKeyframe();
+        Packet keyFrame = sdt().nextFrame();
+        if(!keyFrame.isKeyFrame())
+            throw new IllegalStateException("It is not key frame... see jcodec sources");
+
+        return keyFrame.getPtsD();
+    }
+
 
     /**
      * Position frame grabber to a specific frame in a movie. As a result the
