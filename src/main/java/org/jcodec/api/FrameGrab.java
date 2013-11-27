@@ -119,34 +119,44 @@ public class FrameGrab {
     }
 
 
-    /**
 
-     Возвращает номер ключевого фрейма, юлижайшего к фрейму, которых относится к second
-
-     *
+    /*
+    Возарвщает номер фрейма, по секунде...
 
      */
-    public int getKeyFrameForSeconds(double second) throws IOException, JCodecException {
-        sdt().seek(second);
-        int keyFrame = detectKeyFrame((int) sdt().getCurFrame());
-        return keyFrame;
+
+    public long getPreciseFrameNForSeconds(double seconds) throws IOException, JCodecException {
+        seekToSecondPrecise(seconds);
+        long frame = sdt().getCurFrame();
+        return frame;
     }
 
     /**
 
-     Возвращает номер ключевого фрейма, юлижайшего к фрейму, которых относится к second
-      @return seconds
+     Возвращает ключевой фрейм, юлижайшего к фрейму, которых относится к second
+      @return Packet
      *
-
      */
-    public double getSecondsKeyFrameForSeconds(double second) throws IOException, JCodecException {
+    public Packet getKeyFrameForSeconds(double second) throws IOException, JCodecException {
         sdt().seek(second);
         goToPrevKeyframe();
         Packet keyFrame = sdt().nextFrame();
         if(!keyFrame.isKeyFrame())
             throw new IllegalStateException("It is not key frame... see jcodec sources");
 
-        return keyFrame.getPtsD();
+        return keyFrame;
+    }
+
+    /**
+
+     Возвращает ключевой фрейм, юлижайшего к фрейму, которых относится к second
+     @return seconds
+     *
+     */
+    public double getSecondsByFrameNumber(long frameN) throws IOException, JCodecException {
+        sdt().gotoFrame(frameN);
+        Packet frame = sdt().nextFrame();
+        return frame.getPtsD();
     }
 
 
