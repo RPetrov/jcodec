@@ -3,7 +3,6 @@ package org.jcodec.api;
 import java.io.File;
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.logging.Logger;
 
 import org.jcodec.api.specific.AVCMP4Adaptor;
 import org.jcodec.api.specific.ContainerAdaptor;
@@ -118,22 +117,25 @@ public class FrameGrab {
         return this;
     }
 
-
-
-    /*
-    Возарвщает номер фрейма, по секунде...
+    /**
+        Возарвщает номер фрейма, по секунде...
+        @param seconds time in seconds
+        @return frame number
 
      */
+    public long getFrameNumberBySeconds(double seconds) throws IOException, JCodecException {
 
-    public long getPreciseFrameNForSeconds(double seconds) throws IOException, JCodecException {
-        seekToSecondPrecise(seconds);
-        long frame = sdt().getCurFrame();
-        return frame;
+        double prevDiff = Double.MAX_VALUE;
+        boolean isMinFound = false;
+
+        sdt().seek(seconds);
+        return sdt().nextFrame().getFrameNo();
+
     }
 
     /**
 
-     Возвращает ключевой фрейм, юлижайшего к фрейму, которых относится к second
+     Возвращает ключевой фрейм, ближайший к фрейму, которых относится к second
       @return Packet
      *
      */
@@ -147,17 +149,21 @@ public class FrameGrab {
         return keyFrame;
     }
 
-    /**
 
-     Возвращает ключевой фрейм, юлижайшего к фрейму, которых относится к second
-     @return seconds
-     *
+    /**
+     * Возврашает timestamp кадра, по его номеру
+     * @param frameN       номер фрейма
+     * @return  время в секундах
+     * @throws IOException
+     * @throws JCodecException
      */
+
     public double getSecondsByFrameNumber(long frameN) throws IOException, JCodecException {
         sdt().gotoFrame(frameN);
         Packet frame = sdt().nextFrame();
         return frame.getPtsD();
     }
+
 
 
     /**
